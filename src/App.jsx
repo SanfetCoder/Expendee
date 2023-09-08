@@ -1,22 +1,24 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import samples from './expenseSample';
 import Record from './reusableComponents/record';
 import NavPage from './reusableComponents/navPage';
 import calculateBalance from './helper/calculateBalance';
-import samples from './expenseSample';
 
 function App() {
-  const [transactions, setTransactions] = useState({});
+  const [transactions, setTransactions] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Load transactions from LocalStorage when the component mounts
+  // Load the transactions from local storage when mounts
   useEffect(()=>{
-    const storedTransactions = localStorage.getItem('transactions');
-
-    // If storedTransactions are not null
-    if(storedTransactions !== "undefined" || storedTransactions) setTransactions(JSON.parse(storedTransactions));
-  },[])
-
+    const storedTransactions = localStorage.getItem("transactions");
+    // If the stored transactions are empty, create an empty object
+    if (!storedTransactions) localStorage.setItem("transactions", JSON.stringify({}));
+    const parsedTransactions = JSON.parse(localStorage.getItem("transactions"))
+    // Update the current transactions with the storedc Transactions
+    setTransactions(parsedTransactions);
+    
+  }, [])
 
   function handleAddRecord(e, title, value, category) {
     e.preventDefault();
@@ -41,20 +43,25 @@ function App() {
       // The previous value of current transaction
 
       // If the day exists in the array
-      if (prev.hasOwnProperty(day)){
-        const previousCurrentTransaction = prev[day]
-        const updatedTransaction = {...prev, [day] : [...previousCurrentTransaction, newRecord]};
-        // Update this to the local storage
-        localStorage.setItem('transactions', JSON.stringify(updatedTransaction));
-        return updatedTransaction
+      if (prev) {
+        if (prev.hasOwnProperty(day)){
+          const previousCurrentTransaction = prev[day]
+          const updatedTransaction = {...prev, [day] : [...previousCurrentTransaction, newRecord]};
+          // Update the data to local storage
+          localStorage.setItem("transactions", JSON.stringify(updatedTransaction))
+          return updatedTransaction
+        } else {
+          // Create a shallow copy of the previous value
+          const prevCopy = prev;
+          // Initialize Empty array
+          prevCopy[day] = []
+          const updatedTransaction = {...prevCopy, [day] : [...previousCurrentTransaction, newRecord]};
+            // Update the data to local storage
+          localStorage.setItem("transactions", JSON.stringify(updatedTransaction))
+          return updatedTransaction
+        }
       } else {
-        // Create a shallow copy of the previous value
-        const prevCopy = prev;
-        // Initialize Empty array
-        prevCopy[day] = []
-        const updatedTransaction = {...prevCopy, [day] : [...previousCurrentTransaction, newRecord]};
-        // Update this to the local storage
-        localStorage.setItem('transactions', JSON.stringify(updatedTransaction))
+        const updatedTransaction = {[day] : [newRecord]}
         return updatedTransaction
       }
     });
@@ -77,7 +84,7 @@ function App() {
       <div className="container px-5">
         <Nav />
         <BalanceCard transactions={transactions}/>
-        <Transactions transactions={transactions}/>
+        {transactions && <Transactions transactions={transactions}/>}
       </div>
       <BottomNav onShowModal={handleShowModal}/>
     </div>
@@ -171,21 +178,19 @@ const Transactions = ({transactions}) => {
 
   useEffect(()=>{
     // Sort all transactions
-    if (transactions){
-      const sortedEntries = Object.entries(transactions).sort(([a], [b]) =>
-        new Date(b) - new Date(a)
-      );
-      const sortedData = Object.fromEntries(sortedEntries);
-      setSortedTransactions(sortedData);
-    }
+    // const today = new Date();
+    // const sortedEntries = Object.entries(transactions).sort(([a], [b]) =>
+    //   new Date(b) - new Date(a)
+    // );
+    // const sortedData = Object.fromEntries(sortedEntries);
   }, [transactions])
 
   return (
-    Object.keys(sortedTransactions).map((transaction, index) => {
+    Object.keys(transactions).map((transaction, index) => {
       return <div key={index}>
         <h3 className="font-semibold text-gray-300 mb-4">{transaction}</h3>
         {
-          sortedTransactions[transaction].map(record => <Record title={record.title} category={record.category} balance={record.balance} type={record.type}/>)
+          transactions[transaction].map(record => <Record title={record.title} category={record.category} balance={record.balance} type={record.type}/>)
         }
       </div>
     }

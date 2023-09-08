@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import samples from './expenseSample';
-import Record from './reusableComponents/Record';
+import Record from './reusableComponents/record';
 import NavPage from './reusableComponents/navPage';
 import calculateBalance from './helper/calculateBalance';
 

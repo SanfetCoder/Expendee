@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import samples from './expenseSample';
 import Record from './reusableComponents/record';
 import NavPage from './reusableComponents/navPage';
 import calculateBalance from './helper/calculateBalance';
+import samples from './expenseSample';
 
 function App() {
-  const [transactions, setTransactions] = useState(samples);
+  const [transactions, setTransactions] = useState({});
   const [showModal, setShowModal] = useState(false);
+
+  // Load transactions from LocalStorage when the component mounts
+  useEffect(()=>{
+    const storedTransactions = localStorage.getItem('transactions');
+
+    // If storedTransactions are not null
+    if(storedTransactions !== "undefined" | storedTransactions) setTransactions(JSON.parse(storedTransactions));
+  },[])
+
 
   function handleAddRecord(e, title, value, category) {
     e.preventDefault();
@@ -34,14 +43,19 @@ function App() {
       // If the day exists in the array
       if (prev.hasOwnProperty(day)){
         const previousCurrentTransaction = prev[day]
-        return {...prev, [day] : [...previousCurrentTransaction, newRecord]}
+        const updatedTransaction = {...prev, [day] : [...previousCurrentTransaction, newRecord]};
+        // Update this to the local storage
+        localStorage.setItem('transactions', JSON.stringify(updatedTransaction));
+        return updatedTransaction
       } else {
         // Create a shallow copy of the previous value
         const prevCopy = prev;
         // Initialize Empty array
         prevCopy[day] = []
-
-        return {...prevCopy, [day] : [...previousCurrentTransaction, newRecord]}
+        const updatedTransaction = {...prevCopy, [day] : [...previousCurrentTransaction, newRecord]};
+        // Update this to the local storage
+        localStorage.setItem('transactions', JSON.stringify(updatedTransaction))
+        return updatedTransaction
       }
     });
     

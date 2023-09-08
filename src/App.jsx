@@ -55,7 +55,7 @@ function App() {
     setShowModal(false);
   }
   return (
-    <div className="app flex flex-col w-screen">
+    <div className="app flex flex-col items-center w-screen">
       {showModal && <FormAddRecord onAddRecord={handleAddRecord} onCloseModal={handleCloseModal}/>}
       {showModal && <Modal onClick={()=>{
         setShowModal(false);

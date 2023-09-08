@@ -1,11 +1,13 @@
 const calculateBalance = (transactions) => {
   let totalBalance = 0;
 
-  Object.keys(transactions).forEach((transaction)=>{
-    transactions[transaction].forEach((record)=>{
-      totalBalance += record.balance;
+  if (transactions){
+    Object.keys(transactions).forEach((transaction)=>{
+      transactions[transaction].forEach((record)=>{
+        totalBalance += record.balance;
+      })
     })
-  })
+  }
 
   return totalBalance;
 };

@@ -14,7 +14,7 @@ function App() {
     const storedTransactions = localStorage.getItem('transactions');
 
     // If storedTransactions are not null
-    if(storedTransactions !== "undefined" | storedTransactions) setTransactions(JSON.parse(storedTransactions));
+    if(storedTransactions !== "undefined" || storedTransactions) setTransactions(JSON.parse(storedTransactions));
   },[])
 
 

@@ -193,6 +193,7 @@ const FormEditRecord = ({onCloseModal, onCloseFormEditRecord, onEditRecord, sele
           <option value="Utilities">Utilities</option>
           <option value="Dining">Dining</option>
           <option value="Salary">Salary</option>
+          <option value="Taxi">Taxi</option>
         </select>
         <button onClick={() => {
           // edit the record
@@ -249,6 +250,7 @@ const FormAddRecord = ({onCloseModal, onAddRecord, onCloseFormAddRecord}) => {
           <option value="Utilities">Utilities</option>
           <option value="Dining">Dining</option>
           <option value="Salary">Salary</option>
+          <option value="Taxi">Taxi</option>
         </select>
         <button onClick={(e) => {
           onAddRecord(e, title, value, category)

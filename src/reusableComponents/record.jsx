@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CSSTransition } from 'react-transition-group';
 
-const Record = ({title, category, balance, transaction, index, onDeleteRecord}) => {
+const Record = ({title, category, balance, transaction, index, onDeleteRecord, onEditRecord}) => {
   const categories = {
     "Clothing" : "🥼",
     "Food" : "🍖",
@@ -51,7 +51,7 @@ const Record = ({title, category, balance, transaction, index, onDeleteRecord}) 
         classNames="fade"
         unmountOnExit
       >
-        <EditButton className="mr-3"/>
+        <EditButton onEditRecord={onEditRecord} className="mr-3" transaction={transaction} index={index}/>
       </CSSTransition>
       <CSSTransition
         in={displayDelete}
@@ -65,11 +65,12 @@ const Record = ({title, category, balance, transaction, index, onDeleteRecord}) 
   )
 };
 
-const EditButton = ({className}) =>{
+const EditButton = ({className, onEditRecord, index, transaction}) =>{
+
   return (
     <div
       className={`flex flex-col items-center justify-center bg-orange-400 text-white rounded-full ${className}`}>
-      <div className="w-10 h-10 flex flex-col items-center justify-center">
+      <div className="w-10 h-10 cursor-pointer flex flex-col items-center justify-center">
         <ion-icon name="pencil"></ion-icon>
       </div>
     </div>
@@ -84,7 +85,7 @@ const DeleteButton = ({onDeleteRecord, transaction, index, onAfterDelete, classN
         onAfterDelete();
       }} 
       className="flex flex-col items-center justify-center bg-primary text-white rounded-full">
-      <div className="w-10 h-10 flex flex-col items-center justify-center">
+      <div className="w-10 h-10 cursor-pointer flex flex-col items-center justify-center">
         <ion-icon name="trash"></ion-icon>
       </div>
     </div>

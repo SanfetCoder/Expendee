@@ -8,6 +8,7 @@ import calculateBalance from './helper/calculateBalance';
 function App() {
   const [transactions, setTransactions] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showFormAddRecord, setShowFormAddRecord] = useState(false);
 
   // Load the transactions from local storage when mounts
   useEffect(()=>{
@@ -19,6 +20,34 @@ function App() {
     setTransactions(parsedTransactions);
     
   }, [])
+
+  function handleShowFormAddRecord() {
+    setShowFormAddRecord(true);
+  }
+
+  function handleCloseFormAddRecord() {
+    setShowFormAddRecord(false);
+  }
+
+  function handleEditRecord(index, transaction, title, category, balance){
+    // Get the new information
+    setTransactions((prev)=>{
+      // Create a deep copy of the previous transaction
+      const deepPrev = {...prev};
+      // Update the information inside the record
+      const updatedRecord = {
+        category : category,
+        title : title,
+        balance : balance
+      }
+      // Update date the transaction with the new record
+      deepPrev[transaction][index] = updatedRecord
+      // Update this to transactions in local storage
+      localStorage.setItem("transactions", JSON.stringify(deepPrev));
+      // Set this as a new transactions
+      return deepPrev
+    })
+  }
 
   function handleDeleteRecord(index, transaction){
     setTransactions((prev)=>{
@@ -90,21 +119,21 @@ function App() {
   }
   return (
     <div className="app flex flex-col items-center w-screen">
-      {showModal && <FormAddRecord onAddRecord={handleAddRecord} onCloseModal={handleCloseModal}/>}
+      {showFormAddRecord && <FormAddRecord onCloseFormAddRecord={handleCloseFormAddRecord} onAddRecord={handleAddRecord} onCloseModal={handleCloseModal}/>}
       {showModal && <Modal onClick={()=>{
         setShowModal(false);
       }}/>}
       <div className="container px-5">
         <Nav />
         <BalanceCard transactions={transactions}/>
-        {transactions && <Transactions onDeleteRecord={handleDeleteRecord} transactions={transactions}/>}
+        {transactions && <Transactions onEditRecord={handleEditRecord} onDeleteRecord={handleDeleteRecord} transactions={transactions}/>}
       </div>
-      <BottomNav onShowModal={handleShowModal}/>
+      <BottomNav onShowFormAddRecord={handleShowFormAddRecord} onShowModal={handleShowModal}/>
     </div>
   )
 };
 
-const FormAddRecord = ({onCloseModal, onAddRecord}) => {
+const FormAddRecord = ({onCloseModal, onAddRecord, onCloseFormAddRecord}) => {
   const [title, setTitle]= useState("");
   const [value, setValue] = useState(0);
   const [category, setCategory] = useState('Clothing');
@@ -112,7 +141,10 @@ const FormAddRecord = ({onCloseModal, onAddRecord}) => {
   return (
     <div className="form-add-record flex flex-col absolute bottom-0 bg-white w-screen h-5/6">
       <nav className="flex flex-row m-3 w-auto text-3xl">
-        <div className="cursor-pointer" onClick={onCloseModal}>
+        <div className="cursor-pointer" onClick={()=>{
+          onCloseModal();
+          onCloseFormAddRecord();
+        }}>
           <ion-icon name="close-outline"></ion-icon>
         </div>
       </nav>
@@ -143,6 +175,7 @@ const FormAddRecord = ({onCloseModal, onAddRecord}) => {
           setTitle("");
           setCategory("Clothing");
           onCloseModal();
+          onCloseFormAddRecord();
           }
         } className="mt-5 w-full h-14 text-white font-semibold bg-primary rounded-full">Add</button>
       </form>
@@ -186,7 +219,7 @@ const BalanceCard = ({transactions}) => {
   )
 };
 
-const Transactions = ({transactions, onDeleteRecord}) => {
+const Transactions = ({transactions, onDeleteRecord, onEditRecord}) => {
   const [sortedTransactions, setSortedTransactions] = useState({});
 
   useEffect(()=>{
@@ -205,7 +238,7 @@ const Transactions = ({transactions, onDeleteRecord}) => {
         <h3 className="font-semibold text-gray-300 mb-4">{transaction}</h3>
         {
           sortedTransactions[transaction].map((record, index) =>{ 
-            return <Record onDeleteRecord={onDeleteRecord} index={index} transaction={transaction} title={record.title} category={record.category} balance={record.balance} type={record.type}/>
+            return <Record onEditRecord={onEditRecord} onDeleteRecord={onDeleteRecord} index={index} transaction={transaction} title={record.title} category={record.category} balance={record.balance} type={record.type}/>
             })
         }
       </div>
@@ -214,11 +247,14 @@ const Transactions = ({transactions, onDeleteRecord}) => {
   )
 };
 
-const BottomNav = ({onShowModal}) => {
+const BottomNav = ({onShowModal, onShowFormAddRecord}) => {
   return (
     <div className="bottom-nav flex flex-row items-center justify-between px-10 fixed bottom-0 w-screen bg-white">
       <NavPage iconName="settings-outline">Settings</NavPage>
-      <div onClick={onShowModal} className="bottom-nav_add-button cursor-pointer flex flex-col items-center justify-center">
+      <div onClick={()=>{
+        onShowModal();
+        onShowFormAddRecord();
+        }} className="bottom-nav_add-button cursor-pointer flex flex-col items-center justify-center">
         <p className="bottom-nav_add-button__icon text-white text-3xl">+</p>
       </div>
       <NavPage iconName="person-outline">Sign In</NavPage>

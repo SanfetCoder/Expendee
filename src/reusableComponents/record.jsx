@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CSSTransition } from 'react-transition-group';
 
-const Record = ({title, category, balance, transaction, index, onDeleteRecord, onEditRecord}) => {
+const Record = ({title, category, balance, onSelectRecord, transaction, index, onDeleteRecord, onEditRecord, onShowFormEditRecord, onShowModal}) => {
   const categories = {
     "Clothing" : "🥼",
     "Food" : "🍖",
@@ -27,7 +27,11 @@ const Record = ({title, category, balance, transaction, index, onDeleteRecord, o
   return (
     <div className="flex flex-row items-center mb-3 justify-between">
       <div 
-        onClick={handleClick}
+        onClick={()=>{
+          handleClick();
+          // Update to App environment a currently selected record
+          onSelectRecord(transaction, index);
+          }}
         style={{
           transform: `translateX(${displayDelete ? '-7%' : '0'})`,
           transition: '0.4s all ease-in-out'
@@ -51,7 +55,7 @@ const Record = ({title, category, balance, transaction, index, onDeleteRecord, o
         classNames="fade"
         unmountOnExit
       >
-        <EditButton onEditRecord={onEditRecord} className="mr-3" transaction={transaction} index={index}/>
+        <EditButton onShowModal={onShowModal} onShowFormEditRecord={onShowFormEditRecord} onEditRecord={onEditRecord} className="mr-3" transaction={transaction} index={index}/>
       </CSSTransition>
       <CSSTransition
         in={displayDelete}
@@ -65,10 +69,16 @@ const Record = ({title, category, balance, transaction, index, onDeleteRecord, o
   )
 };
 
-const EditButton = ({className, onEditRecord, index, transaction}) =>{
+const EditButton = ({className, onShowModal, onShowFormEditRecord}) =>{
 
   return (
     <div
+      onClick={
+        ()=>{
+          onShowModal();
+          onShowFormEditRecord();
+        }
+      }
       className={`flex flex-col items-center justify-center bg-orange-400 text-white rounded-full ${className}`}>
       <div className="w-10 h-10 cursor-pointer flex flex-col items-center justify-center">
         <ion-icon name="pencil"></ion-icon>

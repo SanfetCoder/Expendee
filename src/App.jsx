@@ -178,8 +178,9 @@ const Transactions = ({transactions}) => {
 
   useEffect(()=>{
     // Sort all transactions
+    const today = new Date();
     const sortedEntries = Object.entries(transactions).sort(([a], [b]) =>
-      new Date(b) - new Date(a)
+      Math.abs(new Date(b) - today) - Math.abs(new Date(a) - today)
     );
     const sortedData = Object.fromEntries(sortedEntries);
     setSortedTransactions(sortedData)

@@ -20,6 +20,17 @@ function App() {
     
   }, [])
 
+  function handleDeleteRecord(index, transaction){
+    setTransactions((prev)=>{
+      const previousTransactions = {...prev};
+      // Delete a record from the transaction
+      // return previousTransactions[transaction].splice(index, 1);
+      previousTransactions[transaction].splice(index, 1)
+      return previousTransactions;
+    });
+
+  }
+
   function handleAddRecord(e, title, value, category) {
     e.preventDefault();
     const today = new Date();
@@ -84,7 +95,7 @@ function App() {
       <div className="container px-5">
         <Nav />
         <BalanceCard transactions={transactions}/>
-        {transactions && <Transactions transactions={transactions}/>}
+        {transactions && <Transactions onDeleteRecord={handleDeleteRecord} transactions={transactions}/>}
       </div>
       <BottomNav onShowModal={handleShowModal}/>
     </div>
@@ -173,7 +184,7 @@ const BalanceCard = ({transactions}) => {
   )
 };
 
-const Transactions = ({transactions}) => {
+const Transactions = ({transactions, onDeleteRecord}) => {
   const [sortedTransactions, setSortedTransactions] = useState({});
 
   useEffect(()=>{
@@ -191,7 +202,9 @@ const Transactions = ({transactions}) => {
       return <div key={index}>
         <h3 className="font-semibold text-gray-300 mb-4">{transaction}</h3>
         {
-          sortedTransactions[transaction].map(record => <Record title={record.title} category={record.category} balance={record.balance} type={record.type}/>)
+          sortedTransactions[transaction].map((record, index) =>{ 
+            return <Record onDeleteRecord={onDeleteRecord} index={index} transaction={transaction} title={record.title} category={record.category} balance={record.balance} type={record.type}/>
+            })
         }
       </div>
     }

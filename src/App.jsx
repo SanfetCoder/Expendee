@@ -26,6 +26,8 @@ function App() {
       // Delete a record from the transaction
       // return previousTransactions[transaction].splice(index, 1);
       previousTransactions[transaction].splice(index, 1)
+      // Update this to local storage
+      localStorage.setItem('transactions', JSON.stringify(previousTransactions));
       return previousTransactions;
     });
 

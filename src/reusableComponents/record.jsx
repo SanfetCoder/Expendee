@@ -25,9 +25,13 @@ const Record = ({title, category, balance, transaction, index, onDeleteRecord}) 
   }
 
   return (
-    <div className="flex flex-row items-center mb-3 gap-x-4 justify-between">
+    <div className="flex flex-row items-center mb-3 justify-between">
       <div 
         onClick={handleClick}
+        style={{
+          transform: `translateX(${displayDelete ? '-7%' : '0'})`,
+          transition: '0.4s all ease-in-out'
+        }}
         className="flex flex-row cursor-pointer w-full items-center gap-x-4"
       >
         <div className="category-card rounded-2xl p-3 bg-gray-100">
@@ -43,7 +47,15 @@ const Record = ({title, category, balance, transaction, index, onDeleteRecord}) 
       </div>
       <CSSTransition
         in={displayDelete}
-        timeout={300}
+        timeout={200}
+        classNames="fade"
+        unmountOnExit
+      >
+        <EditButton className="mr-3"/>
+      </CSSTransition>
+      <CSSTransition
+        in={displayDelete}
+        timeout={200}
         classNames="fade"
         unmountOnExit
       >
@@ -53,15 +65,28 @@ const Record = ({title, category, balance, transaction, index, onDeleteRecord}) 
   )
 };
 
-const DeleteButton = ({onDeleteRecord, transaction, index, onAfterDelete}) =>{
+const EditButton = ({className}) =>{
+  return (
+    <div
+      className={`flex flex-col items-center justify-center bg-orange-400 text-white rounded-full ${className}`}>
+      <div className="w-10 h-10 flex flex-col items-center justify-center">
+        <ion-icon name="pencil"></ion-icon>
+      </div>
+    </div>
+  )
+}
+
+const DeleteButton = ({onDeleteRecord, transaction, index, onAfterDelete, className}) =>{
   return (
     <div
       onClick={()=>{
         onDeleteRecord(index, transaction)
         onAfterDelete();
       }} 
-      className="flex flex-col w-10 h-9 items-center justify-center bg-primary text-white rounded-full">
-      <ion-icon name="trash"></ion-icon>
+      className="flex flex-col items-center justify-center bg-primary text-white rounded-full">
+      <div className="w-10 h-10 flex flex-col items-center justify-center">
+        <ion-icon name="trash"></ion-icon>
+      </div>
     </div>
   )
 }

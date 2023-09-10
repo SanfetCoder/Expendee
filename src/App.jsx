@@ -178,19 +178,19 @@ const Transactions = ({transactions}) => {
 
   useEffect(()=>{
     // Sort all transactions
-    // const today = new Date();
-    // const sortedEntries = Object.entries(transactions).sort(([a], [b]) =>
-    //   new Date(b) - new Date(a)
-    // );
-    // const sortedData = Object.fromEntries(sortedEntries);
+    const sortedEntries = Object.entries(transactions).sort(([a], [b]) =>
+      new Date(b) - new Date(a)
+    );
+    const sortedData = Object.fromEntries(sortedEntries);
+    setSortedTransactions(sortedData)
   }, [transactions])
 
   return (
-    Object.keys(transactions).map((transaction, index) => {
+    Object.keys(sortedTransactions).map((transaction, index) => {
       return <div key={index}>
         <h3 className="font-semibold text-gray-300 mb-4">{transaction}</h3>
         {
-          transactions[transaction].map(record => <Record title={record.title} category={record.category} balance={record.balance} type={record.type}/>)
+          sortedTransactions[transaction].map(record => <Record title={record.title} category={record.category} balance={record.balance} type={record.type}/>)
         }
       </div>
     }

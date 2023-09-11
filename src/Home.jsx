@@ -317,7 +317,10 @@ const Transactions = ({transactions, onDeleteRecord, onShowModal, onEditRecord, 
   return (
     Object.keys(sortedTransactions).map((transaction, index) => {
       return <div key={index}>
-        <h3 className="font-semibold text-gray-300 mb-4">{transaction}</h3>
+        <div className="flex flex-row justify-between">
+          <h3 className="font-semibold text-gray-300 mb-4">{transaction}</h3>
+          <TransactionTotal transaction={transactions[transaction]} />
+        </div>
         {
           sortedTransactions[transaction].map((record, index) =>{ 
             return <Record onSelectRecord={onSelectRecord} onShowModal={onShowModal} onShowFormEditRecord={onShowFormEditRecord} onEditRecord={onEditRecord} onDeleteRecord={onDeleteRecord} index={index} transaction={transaction} title={record.title} category={record.category} balance={record.balance} type={record.type}/>
@@ -326,6 +329,13 @@ const Transactions = ({transactions, onDeleteRecord, onShowModal, onEditRecord, 
       </div>
     }
     )
+  )
+};
+
+const TransactionTotal = ({transaction}) => {
+  const totalBalance = transaction.reduce((accu,val)=>{return accu + val.balance},0);
+  return(
+  <p className={`font-semibold ${totalBalance < 0 ? "text-red-600" : "text-green-600"}`}>{totalBalance}</p>
   )
 };
 

@@ -10,6 +10,7 @@ const Home = ({onChangeCurrentPage}) => {
   const [showFormAddRecord, setShowFormAddRecord] = useState(false);
   const [showFormEditRecord, setShowFormEditRecord] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const categories = ["Clothing","Food","Shopping","Transportation","Entertainment","Groceries","Utilities","Dining","Salary","Taxi","Pet"]
 
   // Load the transactions from local storage when mounts
   useEffect(()=>{
@@ -142,8 +143,8 @@ const Home = ({onChangeCurrentPage}) => {
   }
   return (
     <div className="app flex flex-col items-center w-screen">
-      {showFormEditRecord && <FormEditRecord selectedRecord={selectedRecord} onEditRecord={handleEditRecord} onCloseModal={handleCloseModal} onCloseFormEditRecord={handleCloseFormEditRecord}/>}
-      {showFormAddRecord && <FormAddRecord onCloseFormAddRecord={handleCloseFormAddRecord} onAddRecord={handleAddRecord} onCloseModal={handleCloseModal}/>}
+      {showFormEditRecord && <FormEditRecord categories={categories} selectedRecord={selectedRecord} onEditRecord={handleEditRecord} onCloseModal={handleCloseModal} onCloseFormEditRecord={handleCloseFormEditRecord}/>}
+      {showFormAddRecord && <FormAddRecord categories={categories} onCloseFormAddRecord={handleCloseFormAddRecord} onAddRecord={handleAddRecord} onCloseModal={handleCloseModal}/>}
       {showModal && <Modal onClick={()=>{
         setShowModal(false);
       }}/>}
@@ -157,7 +158,7 @@ const Home = ({onChangeCurrentPage}) => {
   )
 }
 
-const FormEditRecord = ({onCloseModal, onCloseFormEditRecord, onEditRecord, selectedRecord}) => {
+const FormEditRecord = ({onCloseModal, onCloseFormEditRecord, onEditRecord, selectedRecord, categories}) => {
   const [category, setCategory] = useState('Clothing')
   const [value, setValue] = useState(0);
   const [title, setTitle] = useState("");
@@ -183,16 +184,13 @@ const FormEditRecord = ({onCloseModal, onCloseFormEditRecord, onEditRecord, sele
         </div>
         <label className="font-semibold">Type of this transaction</label>
         <select value={category} onChange={e => setCategory(e.target.value)} className="px-10 h-14 w-full rounded-full">
-          <option value="Clothing">Clothing</option>
-          <option value="Food">Food</option>
-          <option value="Shopping">Shopping</option>
-          <option value="Transportation">Transportation</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Groceries">Groceries</option>
-          <option value="Utilities">Utilities</option>
-          <option value="Dining">Dining</option>
-          <option value="Salary">Salary</option>
-          <option value="Taxi">Taxi</option>
+          {
+            categories.map((category)=>{
+              return (
+                <option value={category}>{category}</option>
+              )
+            })
+          }
         </select>
         <button onClick={() => {
           // edit the record
@@ -214,7 +212,7 @@ const FormEditRecord = ({onCloseModal, onCloseFormEditRecord, onEditRecord, sele
 };
 
 
-const FormAddRecord = ({onCloseModal, onAddRecord, onCloseFormAddRecord}) => {
+const FormAddRecord = ({onCloseModal, onAddRecord, onCloseFormAddRecord, categories}) => {
   const [title, setTitle]= useState("");
   const [value, setValue] = useState(0);
   const [category, setCategory] = useState('Clothing');
@@ -240,16 +238,13 @@ const FormAddRecord = ({onCloseModal, onAddRecord, onCloseFormAddRecord}) => {
         </div>
         <label className="font-semibold">Type of this transaction</label>
         <select value={category} onChange={e => setCategory(e.target.value)} className="px-10 h-14 w-full rounded-full">
-          <option value="Clothing">Clothing</option>
-          <option value="Food">Food</option>
-          <option value="Shopping">Shopping</option>
-          <option value="Transportation">Transportation</option>
-          <option value="Entertainment">Entertainment</option>
-          <option value="Groceries">Groceries</option>
-          <option value="Utilities">Utilities</option>
-          <option value="Dining">Dining</option>
-          <option value="Salary">Salary</option>
-          <option value="Taxi">Taxi</option>
+          {
+            categories.map((category)=>{
+              return (
+                <option value={category}>{category}</option>
+              )
+            })
+          }
         </select>
         <button onClick={(e) => {
           onAddRecord(e, title, value, category)

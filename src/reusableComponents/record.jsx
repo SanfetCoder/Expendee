@@ -12,7 +12,8 @@ const Record = ({title, category, balance, onSelectRecord, transaction, index, o
     "Utilities" : "⚡️",
     "Dining" : "🍛",
     "Salary" : "💰",
-    "Taxi" : "🚕"
+    "Taxi" : "🚕",
+    "Pet" : "🐈"
   }
 
   const [displayDelete, setDisplayDelete] = useState(false);
